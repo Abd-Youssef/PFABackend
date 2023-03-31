@@ -2,13 +2,14 @@ const { User } = require("../model/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
+const { MailTransporter } = require("./mailController");
 
 function login(req, res) {
   User.findOne({
     email: req.body.email,
   })
     .then((user) => {
-      if (!user ) {
+      if (!user) {
         res.status(404).json({ status: 404, message: "User not found" });
       } else {
         bcrypt.compare(req.body.password, user.password).then((valid) => {
@@ -31,7 +32,7 @@ function login(req, res) {
                   status: 200,
                   message: "login with success",
                   data: user,
-                  token:token,
+                  token: token,
                 });
               })
               .catch((error) =>
@@ -104,8 +105,62 @@ async function deleteUser(req, res) {
     return res.status(500).json({ status: 500, message: error.message });
   }
 }
+function generateRandomPassword() {
+  const chars =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    result += chars[randomIndex];
+  }
+  return result;
+} 
+function changePassword(req, res) {
+  try { 
+    const password = generateRandomPassword(); 
+    bcrypt
+      .hash(password, 10)
+      .then((hash) => {
+        User.findOneAndUpdate(
+          {
+            email: req.body.email,
+          },
+          { 
+            password: hash,
+          }
+        )
+          .then((user) => {
+            const transporter = MailTransporter();
+            let info = transporter.sendMail({
+              from: "HeartDiseaseDev@outlook.com",
+              to: user.email, 
+              subject: "Reset password",
+              html: "<h1>Hello</h1></br><b>Your New Password :" + password + "</b> ",
+            }); 
+            return res
+              .status(200)
+              .json({ status: 200, message: "Password changed and Email sent successfully!" });
+          }) 
+          .catch((error) => {
+            return res
+              .status(400)
+              .json({ status: 400, message: error.message });
+          }); 
+      })
+      .catch((error) =>{
+        return res.status(500).json({ status: 500, message: error.message })
+      }
+      );
+  } catch (error) {
+    return res.status(500).json({ status: 500, message: error.message });
+  }
+} 
+
+
+
 
 exports.getUserDetails = getUserDetails;
 exports.signup = signup;
 exports.login = login;
 exports.deleteUser = deleteUser;
+exports.changePassword = changePassword; 
