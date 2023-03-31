@@ -40,7 +40,7 @@ function getServeyDetails(req, res) {
 async function getServeyForeachUser(req,res){
   try {
     if(req.query.userid){
-      const servey= await Servey.find({ user: req.query.userid });
+      const servey= await Servey.find({ userid: req.query.userid });
       if(servey){
         return res.status(200).json({status:200, servey:servey })
       }

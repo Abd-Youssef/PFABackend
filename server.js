@@ -6,6 +6,7 @@ var http = require("http");
 const { normalizePort } = require("./common");
 var server = http.createServer(app);
 const userRoutes = require("./src/routes/UserRoutes");
+const serveyRoutes = require("./src/routes/ServeyRoutes");
 app.use(express.json());
 app.use(cors());
 const mongoose = require("mongoose");
@@ -31,3 +32,4 @@ app.get("/", (req, res) => {
 });
 
 app.use("/", userRoutes);
+app.use("/servey", serveyRoutes);
