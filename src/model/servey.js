@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const serveySchema = mongoose.Schema(
   {
-    user:{
+    userid:{
         type: mongoose.SchemaTypes.ObjectId,
         ref: "user"
         // require: true
