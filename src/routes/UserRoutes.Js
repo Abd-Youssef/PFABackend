@@ -6,8 +6,11 @@ const auth = require("../middleware/auth");
 
 router.post("/login", userController.login);
 router.post("/signup", userController.signup);
+router.put("/changePassword", userController.changePassword);
 router.get("/getUserDetails", auth, userController.getUserDetails);
 router.get("/deleteUser", auth, userController.deleteUser);
-router.put("/changePassword", userController.changePassword);
+router.post("/sendmail",auth, userController.sendMail);
+  
 
-module.exports = router;
+module.exports = router; 
+ 

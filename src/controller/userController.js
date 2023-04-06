@@ -114,10 +114,10 @@ function generateRandomPassword() {
     result += chars[randomIndex];
   }
   return result;
-} 
+}
 function changePassword(req, res) {
-  try { 
-    const password = generateRandomPassword(); 
+  try {
+    const password = generateRandomPassword();
     bcrypt
       .hash(password, 10)
       .then((hash) => {
@@ -125,7 +125,7 @@ function changePassword(req, res) {
           {
             email: req.body.email,
           },
-          { 
+          {
             password: hash,
           }
         )
@@ -133,34 +133,60 @@ function changePassword(req, res) {
             const transporter = MailTransporter();
             let info = transporter.sendMail({
               from: "HeartDiseaseDev@outlook.com",
-              to: user.email, 
+              to: user.email,
               subject: "Reset password",
-              html: "<h1>Hello</h1></br><b>Your New Password :" + password + "</b> ",
-            }); 
-            return res
-              .status(200)
-              .json({ status: 200, message: "Password changed and Email sent successfully!" });
-          }) 
+              html:
+                "<h1>Hello</h1></br><b>Your New Password :" +
+                password +
+                "</b> ",
+            });
+            return res.status(200).json({
+              status: 200,
+              message: "Password changed and Email sent successfully!",
+            });
+          })
           .catch((error) => {
             return res
               .status(400)
               .json({ status: 400, message: error.message });
-          }); 
+          });
       })
-      .catch((error) =>{
-        return res.status(500).json({ status: 500, message: error.message })
-      }
-      );
+      .catch((error) => {
+        return res.status(500).json({ status: 500, message: error.message });
+      });
   } catch (error) {
     return res.status(500).json({ status: 500, message: error.message });
   }
-} 
-
-
-
+}
+function sendMail(req, res) {
+  User.findOne({
+    email: req.body.email,
+  })
+    .then((user) => {
+      if (!user) {
+        res.status(404).json({ status: 404, message: "User not found" });
+      } else {
+        const transporter = MailTransporter();
+        let info = transporter.sendMail({
+          from: "HeartDiseaseDev@outlook.com",
+          to: "HeartDiseaseDev@outlook.com",
+          subject: req.body.header,
+          html: "<h1>Hello</h1><p>" + req.body.mail + "</p><p>" + user.email + "</p>",
+        });
+        return res.status(200).json({
+          status: 200,
+          message: "Email sent successfully!",
+        });
+      }
+    })
+    .catch((error) =>
+      res.status(500).json({ status: 500, message: error.message })
+    );
+}
 
 exports.getUserDetails = getUserDetails;
 exports.signup = signup;
 exports.login = login;
 exports.deleteUser = deleteUser;
-exports.changePassword = changePassword; 
+exports.changePassword = changePassword;
+exports.sendMail = sendMail;
