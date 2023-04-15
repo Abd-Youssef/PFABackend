@@ -5,7 +5,9 @@ const app = express();
 var http = require("http");
 const { normalizePort } = require("./common");
 var server = http.createServer(app);
-const userRoutes = require("./src/routes/UserRoutes");
+const userRoutes = require("./src/routes/UserRoutes")
+const doctorRoutes = require("./src/routes/DoctorRoutes")
+//const userRoutes = require("./src/routes/UserRoutes");
 const serveyRoutes = require("./src/routes/ServeyRoutes");
 const MLRoutes = require("./src/routes/MLRoutes");
 app.use(express.json());
@@ -18,7 +20,7 @@ var port = normalizePort(process.env.PORT || "8000");
 mongoose
   .connect(process.env.DB_URL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true, 
   })
   .then(() => console.log("connexion à MongoDB réussir !"))
   .catch((err) => {
@@ -49,35 +51,5 @@ app.get('/', (req, res) => {
 app.use("/", userRoutes);
 app.use("/servey", serveyRoutes);
 app.use("/predict", MLRoutes);
+app.use("/doctor", doctorRoutes);
 
-
-// let runPy = new Promise(function(success, nosuccess) {
-//   const { spawn } = require('child_process');
-//   const pyprog = spawn('python', ['src/python/file.py']);
-
-//   pyprog.stdout.on('data', function(data) {
-//     success(data);
-//   });
-
-//   pyprog.stderr.on('data', (data) => {
-//     nosuccess(data);
-//   });
-
-//   pyprog.on('error', (err) => { // add this error handler
-//     nosuccess(err);
-//   });
-// })
-// .catch((err) => {
-//   console.error(err); // handle the rejection error here
-// });
-
-
-// app.get('/', (req, res) => {
-
-//   res.write('welcome\n'); 
-
-//   runPy.then(function(fromRunpy) {
-//       console.log(fromRunpy.toString()); 
-//       res.end(fromRunpy);
-//   });
-// })
