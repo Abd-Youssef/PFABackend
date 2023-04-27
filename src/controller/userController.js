@@ -5,9 +5,12 @@ const auth = require("../middleware/auth");
 const { MailTransporter } = require("./mailController");
 
 function login(req, res) {
-  User.findOne({
-    email: req.body.email,
-  })
+  const today = new Date();
+  const todayFormatted = today.toISOString().substring(0, 10);
+  User.findOneAndUpdate(
+    { email: req.body.email },
+    { lastLogin: today, $inc: { loginCount: 1 } }
+  )
     .then((user) => {
       if (!user) {
         res.status(404).json({ status: 404, message: "User not found" });
@@ -46,6 +49,7 @@ function login(req, res) {
       res.status(500).json({ status: 500, message: error.message })
     );
 }
+
 function signup(req, res) {
   User.findOne({
     email: req.body.email,
@@ -64,6 +68,8 @@ function signup(req, res) {
             password: hash,
             email: req.body.email,
             verification_code: RandomNumber,
+            createdAt : new Date(),
+            lastLogin: null,
           });
           userDetails
             .save()
@@ -183,6 +189,36 @@ function sendMail(req, res) {
       res.status(500).json({ status: 500, message: error.message })
     );
 }
+function getLoginCountByDay(req, res) {
+  User.aggregate([
+    {
+      $match: {
+        lastLogin: { $ne: null },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: "%Y-%m-%d", date: "$lastLogin" },
+        },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
+  ])
+    .then((result) => {
+      res.status(200).json({ status: 200, data: result });
+    })
+    .catch((error) => {
+      res.status(500).json({ status: 500, message: error.message });
+    });
+}
+
+
 
 exports.getUserDetails = getUserDetails;
 exports.signup = signup;
@@ -190,3 +226,4 @@ exports.login = login;
 exports.deleteUser = deleteUser;
 exports.changePassword = changePassword;
 exports.sendMail = sendMail;
+exports.getLoginCountByDay =getLoginCountByDay;

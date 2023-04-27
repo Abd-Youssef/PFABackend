@@ -7,7 +7,7 @@ const { normalizePort } = require("./common");
 var server = http.createServer(app);
 const userRoutes = require("./src/routes/UserRoutes")
 const doctorRoutes = require("./src/routes/DoctorRoutes")
-//const userRoutes = require("./src/routes/UserRoutes");
+const statRoutes = require("./src/routes/StatRoutes");
 const serveyRoutes = require("./src/routes/ServeyRoutes");
 const MLRoutes = require("./src/routes/MLRoutes");
 app.use(express.json());
@@ -52,4 +52,5 @@ app.use("/", userRoutes);
 app.use("/servey", serveyRoutes);
 app.use("/predict", MLRoutes);
 app.use("/doctor", doctorRoutes);
+app.use("/stat", statRoutes);
 

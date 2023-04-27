@@ -23,7 +23,24 @@ const userSchema = mongoose.Schema(
       type: String,
       required : true ,
       default : "guest",
-    }
+    },
+    createdAt: {
+      type: Date,
+      default: null
+    },
+    lastLogin: {
+      type: Date,
+      default: null
+    },
+    loginCount: {
+      type: Number,
+      default: 0,
+    },
+    surveyCount: {
+      type: Number,
+      default: 0,
+    },
   },
 );
+
 module.exports.User = mongoose.model("user", userSchema);

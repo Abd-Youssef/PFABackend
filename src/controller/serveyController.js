@@ -33,7 +33,7 @@ async function createServey(req, res) {
     diabetes,
     cholesterol,
     systolic_blood_pressure,
-    bmi,
+    bmi, 
     heart_beat,
     glucose_levels,
   } = req.body;
@@ -51,7 +51,6 @@ async function createServey(req, res) {
     heart_beat: heart_beat,
     glucose_levels: glucose_levels,
   };
-  console.log("sqdqsd", X);
   try {
     const result = await predict(X);
     console.log("result", result);
@@ -68,12 +67,12 @@ async function createServey(req, res) {
       systolic_blood_pressure,
       bmi,
       heart_beat,
-      glucose_levels,
-      result,
+      glucose_levels, 
+      result, 
       date: new Date(),
     });
     console.log("serveyDetails",serveyDetails);
-    await serveyDetails.save();
+    await serveyDetails.save(); 
     res
       .status(201)
       .json({ status: 201, message: "servey created", prediction: result });

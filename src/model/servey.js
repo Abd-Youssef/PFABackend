@@ -20,7 +20,7 @@ const serveySchema = mongoose.Schema(
     //     required: true,
     // },
     cigarettes_per_day: {
-        type: Number,
+        type: Number, 
         required : true ,
         default : 0,
     },
@@ -70,7 +70,7 @@ const serveySchema = mongoose.Schema(
         required : true ,
     },
     date: {
-        type: Number,
+        type: Date,
         required: false,
       },
   },
