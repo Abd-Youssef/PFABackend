@@ -5,11 +5,11 @@ const app = express();
 var http = require("http");
 const { normalizePort } = require("./common");
 var server = http.createServer(app);
-const userRoutes = require("./src/routes/UserRoutes.js")
 const doctorRoutes = require("./src/routes/DoctorRoutes")
 const statRoutes = require("./src/routes/StatRoutes");
 const serveyRoutes = require("./src/routes/ServeyRoutes");
 const MLRoutes = require("./src/routes/MLRoutes");
+const userRoutes = require("./src/routes/UserRoutes.Js")
 app.use(express.json());
 app.use(cors());
 const mongoose = require("mongoose");
