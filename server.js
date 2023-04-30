@@ -32,21 +32,30 @@ server.listen(port, () => {
 });
 
 
-app.get('/', (req, res) => {
+// app.get('/', (req, res) => {
 
-  const { spawn } = require('child_process');
-  X = [[1,33,4.0,0.0,0.0,0.0,0,0.0,165,136.0,24.95,88,290]]
-  const pythonProcess = spawn("python", ["src/python/file.py",JSON.stringify(X)]);
+//   const { spawn } = require('child_process');
+//   X = [[1,33,4.0,0.0,0.0,0.0,0,0.0,165,136.0,24.95,88,290]]
+//   const pythonProcess = spawn("python", ["src/python/file.py",JSON.stringify(X)]);
 
 
-  pythonProcess.stdout.on('data', function(data) {
+//   pythonProcess.stdout.on('data', function(data) {
 
-      console.log(data.toString());
-      res.write(data);
-      res.end('end');
-  });
-})
+//       console.log(data.toString());
+//       res.write(data);
+//       res.end('end');
+//   });
+// })
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 app.use("/", userRoutes);
 app.use("/servey", serveyRoutes);
