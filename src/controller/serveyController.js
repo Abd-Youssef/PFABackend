@@ -12,9 +12,12 @@ function predict(data) {
       result += data.toString();
     });
     pythonProcess.stdout.on("end", function () {
+      console.log("result1",result);
       
       try {
         const predictions = JSON.parse(result);
+    console.log("predictions",predictions);
+
         resolve(predictions);
       } catch (error) {
         console.error("Error parsing JSON data:", error);
@@ -78,7 +81,7 @@ async function createServey(req, res) {
       result, 
       date: new Date(),
     });
-    console.log("serveyDetails",serveyDetails);
+    //console.log("serveyDetails",serveyDetails);
     await serveyDetails.save(); 
     res
       .status(201)
