@@ -12,8 +12,15 @@ function predict(data) {
       result += data.toString();
     });
     pythonProcess.stdout.on("end", function () {
-      const predictions = JSON.parse(result);
-      resolve(predictions);
+      
+      try {
+        const predictions = JSON.parse(result);
+        resolve(predictions);
+      } catch (error) {
+        console.error("Error parsing JSON data:", error);
+      }
+      
+      
     });
     pythonProcess.on("error", function (err) {
       reject(err);
