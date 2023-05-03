@@ -1,5 +1,6 @@
 const { Servey } = require("../model/servey");
 const { spawn } = require("child_process");
+const fetch = require('node-fetch');
 
 function predict(data) {
   return new Promise((resolve, reject) => {
@@ -30,8 +31,20 @@ function predict(data) {
     });
   });
 }
-
+async function getResult(X) {
+  const response = await fetch(process.env.Predection_URL + "predict", {
+    method: "POST",
+    body: JSON.stringify(X),
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+  const result = await response.json();
+  return Number(result.prediction);
+}
 async function createServey(req, res) {
+  
   let {
     userid,
     sexe,
@@ -46,24 +59,9 @@ async function createServey(req, res) {
     bmi, 
     heart_beat,
     glucose_levels,
+    result
   } = req.body;
-  const X = {
-    sexe: sexe,
-    age: age,
-    cigarettes_per_day: cigarettes_per_day,
-    blood_pressure_meds: blood_pressure_meds,
-    stroke_prevalence: stroke_prevalence,
-    hypertension_prevalence: hypertension_prevalence,
-    diabetes: diabetes,
-    cholesterol: cholesterol,
-    systolic_blood_pressure: systolic_blood_pressure,
-    bmi: bmi,
-    heart_beat: heart_beat,
-    glucose_levels: glucose_levels,
-  };
   try {
-    const result = await predict(X);
-    console.log("result", result);
     let serveyDetails = new Servey({
       userid,
       sexe,
@@ -78,10 +76,10 @@ async function createServey(req, res) {
       bmi,
       heart_beat,
       glucose_levels, 
-      result, 
+      result: result,
       date: new Date(),
     });
-    //console.log("serveyDetails",serveyDetails);
+    console.log("serveyDetails",serveyDetails);
     await serveyDetails.save(); 
     res
       .status(201)
